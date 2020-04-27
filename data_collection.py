@@ -18,7 +18,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import OrderedDict
 
-numDays = 5
+numDays = 25
+startYear = 2013
 
 #Set up Spotify Authentication keys
 cid = '47c048a48eb241eb87f5303a87519107'
@@ -62,7 +63,7 @@ def setUpWeather(cur, conn):
 
     #Establish a start date and the incrementer for how many days to skip during each iteration
     count = 0
-    start_date = datetime.date(2014, 1, 1)
+    start_date = datetime.date(startYear, 6, 1)
     delta = datetime.timedelta(days=10)
 
     #Only access 20 items at a time from the API
@@ -141,7 +142,7 @@ def setUpBillBoards(cur, conn):
 
     reg_exp = r'^\S+'
                 
-    start_date = datetime.date(2014, 1, 1)
+    start_date = datetime.date(startYear, 6, 1)
     #end_date = datetime.date(2020, 4, 24)
     delta = datetime.timedelta(days=numDays)
 
@@ -188,7 +189,7 @@ def setUpBillBoards(cur, conn):
 def setUpGenres(cur, conn):
         
     count = 0
-    start_date = datetime.date(2014, 1, 1)
+    start_date = datetime.date(startYear, 6, 1)
     delta = datetime.timedelta(days=numDays)
 
     while count < 20:
