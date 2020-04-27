@@ -114,8 +114,7 @@ def setUpWeather(cur, conn):
 def setUpBillBoards(cur, conn):
 
     # genre setup
-    genres = {'dance pop':'pop',
-                'dance' : 'edm',
+    genres = {  'dance' : 'edm',
                 'modern rock': 'rock',
                 'pop rock': 'rock',
                 'rock' : 'rock',
@@ -125,8 +124,8 @@ def setUpBillBoards(cur, conn):
                 'tropical house' : 'edm',
                 'pop' : 'pop',
                 'pop punk': 'pop',
-                'post-teen pop' : 'pop',
-                'teen pop' : 'pop',
+                'post-teen pop' : 'teen pop',
+                'teen pop' : 'teen pop',
                 'country': 'country',
                 'contemporary country': 'country',
                 'hip hop': 'rap',
@@ -149,7 +148,7 @@ def setUpBillBoards(cur, conn):
         else:
             pass
 
-        chart = chart[:5]
+        chart = chart[:15]
         for item in chart:
             #Data Cleaning and Preprocessing for genre
             artist = item.artist.replace('by', '')
@@ -209,88 +208,8 @@ def setUpGenres(cur, conn):
         cur.execute('INSERT INTO Genres (date, genre) VALUES (?,?)', (str(start_date), common_genre)) 
         conn.commit()
 
-        start_date += delta    
+        start_date += delta   
 
-    
-
-#   ------------------------------------------NEW FILE BEGINS HERE--------------------------------------------
-
-#Using SQL joins to find corresponding genres for a particular date
-#Using matplotlib to produce bar graphs and pie charts
-def joinTables(cur, conn):
-    # -------- Visualization #1--------------------
-    cur.execute('SELECT Genres.date, Genres.genre \
-        FROM Genres \
-        JOIN Weather_condition \
-        ON Weather_condition.date = Genres.date')
-    date_and_genre = cur.fetchall()
-    
-    frequency_of_genre = {}
-    for date, genre in date_and_genre:
-        frequency_of_genre[genre] = frequency_of_genre.get(genre, 0) + 1
-
-    x_axis = frequency_of_genre.keys()
-    y_axis = frequency_of_genre.values()
-    plt.bar(x_axis, y_axis)
-    plt.title('Music Genres vs Frequency')
-    plt.ylabel('Frequency')
-    plt.xlabel('Genres')
-    plt.savefig('Genre vs Frequency Bar Graph')
-
-    # ------------ Visualization #2 ----------------------        
-    cur.execute('SELECT Weather_condition.condition, Genres.genre \
-        FROM Genres \
-        JOIN Weather_condition \
-        ON Weather_condition.date = Genres.date')
-    condition_and_genre = cur.fetchall()
-    print(condition_and_genre)
-
-    genre_freq_by_condition = {'Cloudy' : {}, 
-                                    'Rainy' : {},
-                                    'Sunny' : {},
-                                    'Snow' : {},
-                                    'Hail' : {}}
-
-    for state, genre in condition_and_genre:
-        genre_freq_by_condition[state][genre] = genre_freq_by_condition[state].get('genre', 0) + 1
-
-    i = 0
-    for item in genre_freq_by_condition.items():
-        #we need to map each weather state into a pie chart where the percentages are determined by the frequency of the genre
-        labels = item[1].keys()
-        percentages = item[1].values()
-        print(labels)
-        print(percentages)
-        fig1, ax1 = plt.subplots()
-        ax1.pie(percentages, labels=labels, shadow=True, startangle=90, autopct='%1.1f%%')
-        ax1.axis('equal')
-        plt.title('Music Genres vs Frequency')
-        plt.legend()
-        plt.savefig('Genre vs Frequency Bar Graph ' + str(i))
-        i += 1
-
-
-    cur.execute('SELECT Weather_temp.temperature, Genres.genre \
-        FROM Genres \
-        JOIN Weather_temp \
-        ON Weather_temp.date = Genres.date')
-    temperature_and_genre = cur.fetchall()
-
-    
-
-
-
-    # cur.execute('''UPDATE Weather_temp 
-    #                 SET Weather_temp.condition = Weather_condition.condition 
-    #                 FROM Weather_temp
-    #                 INNER JOIN Weather_condition 
-    #                 ON date = Weather_condition.date''')
-    conn.commit()
-
-
-# Plot weather vs genre
-# Plot weather over time
-# Plot time over genre
 
 def main():
     cur, conn = setUpDatabase('final.db')
@@ -299,18 +218,16 @@ def main():
     setUpTables(cur, conn)
     print("Set up the Tables")
 
-    # setUpWeather(cur, conn)
-    # print("Set up the weather")
+    setUpWeather(cur, conn)
+    print("Set up the weather")
 
-    # setUpBillBoards(cur, conn)
-    # print("Set up the Billboards")
+    setUpBillBoards(cur, conn)
+    print("Set up the Billboards")
 
-    # setUpGenres(cur, conn)
-    # print("Set up the Genres")
+    setUpGenres(cur, conn)
+    print("Set up the Genres")
 
-    joinTables(cur, conn)
-    print("Joint Genres with Weather Dates")
 
 
 if __name__ == "__main__":
-    main()
+    main() 
