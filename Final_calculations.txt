@@ -13,19 +13,18 @@ Weather State: Snow | Frequencies of Genre: {}
 Weather State: Hail | Frequencies of Genre: {"rock": 1}
 
 
+----------------------------------------------------------------------------------------------------------------------------
 
+Frequency of Genres Over Time
 
-
-
-
-
-
-
-
-
-
-
-
+Year: 2013 | Frequency of Genre: {"dance pop": 7, "rap": 2}
+Year: 2014 | Frequency of Genre: {"rock": 3, "dance pop": 12}
+Year: 2015 | Frequency of Genre: {"dance pop": 9, "edm": 1, "pop": 3, "rap": 1}
+Year: 2016 | Frequency of Genre: {"pop": 2, "rap": 2, "dance pop": 7, "r&b": 1, "edm": 3}
+Year: 2017 | Frequency of Genre: {"rap": 12, "edm": 1, "dance pop": 1}
+Year: 2018 | Frequency of Genre: {"rap": 15}
+Year: 2019 | Frequency of Genre: {"rap": 8, "dance pop": 3, "pop": 2, "Other": 2}
+Year: 2020 | Frequency of Genre: {"rap": 1, "pop": 2}
 
 
 

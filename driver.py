@@ -12,6 +12,7 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 import data_collection
+from collections import OrderedDict
 
 frequency_of_genre = {}
 genre_freq_by_condition = {'Cloudy' : {}, 
@@ -19,6 +20,8 @@ genre_freq_by_condition = {'Cloudy' : {},
                             'Sunny' : {},
                             'Snow' : {},
                             'Hail' : {}}
+yearly_frequencies = OrderedDict()
+yearly_frequencies = {}
 
 #Using SQL joins to find corresponding genres for a particular date
 #Using matplotlib to produce bar graphs and pie charts
@@ -71,8 +74,67 @@ def pieCharts(cur, conn):
         plt.savefig('Genre vs Frequency Pie Chart ' + str(i))
         i += 1
 
+# ------------------ Visualization #5---------------------- 
+# Input: Cur and conn of the database
+# Output: A bar graph analyzing the change in music taste in terms of genres across the years
 def yearsAnalysisOfGenre(cur, conn):
+
+    year = data_collection.startYear
+
+    while year <= 2020:
+        cur.execute('''SELECT genre \
+            FROM Genres \
+            WHERE substr(Genres.date, 1, 4) LIKE ? ''', (year,))
+
+        data = cur.fetchall()
+
+        insert = {}
+        for item in data:
+            item = item[0]
+            insert[item] = insert.get(item, 0) + 1
+        
+        yearly_frequencies[year] = insert
+        year += 1
+
+    # set parameters
+    barWidth = 0.17
+    fig, ax = plt.subplots()
+
+    # set height of bars
+    dancepop = []
+    rap = []
+    edm = []
+    pop = []
     
+    for item in yearly_frequencies:
+        dancepop.append(yearly_frequencies[item].get('dance pop', 0))
+        rap.append(yearly_frequencies[item].get('rap', 0))
+        edm.append(yearly_frequencies[item].get('edm', 0))
+        pop.append(yearly_frequencies[item].get('pop', 0))
+
+    # Set position of bar on X axis
+    r1 = np.arange(len(dancepop))
+    r2 = [x + barWidth for x in r1]
+    r3 = [x + barWidth for x in r2]
+    r4 = [x + barWidth for x in r3]
+
+    # Make the plot
+    ax.bar(r1, dancepop, width=barWidth, edgecolor='white', label='dance pop')
+    ax.bar(r2, rap, width=barWidth, edgecolor='white', label='rap')
+    ax.bar(r3, edm, width=barWidth, edgecolor='white', label='edm')
+    ax.bar(r4, pop, width=barWidth, edgecolor='white', label='pop')
+
+    # Add xticks on the middle of the group bars
+    plt.xlabel('Year', fontweight='bold')
+    ax.set_xticks(r1 + barWidth / 2)
+    ax.set_xticklabels(('2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020'))
+    plt.ylabel('Frequency', fontweight='bold')
+
+    # Create legend & Show graphic
+    plt.legend()
+    plt.title('Frequency of Different Genres by Year')
+    plt.savefig('Frequency of Different Genres by Year')
+
 
 
 # Input: None
@@ -82,10 +144,18 @@ def writeToFile():
     f.write("Frequency of Music Genre\n\n")
     f.write(json.dumps(frequency_of_genre))
     f.write('\n\n----------------------------------------------------------------------------------------------------------------------------\n\n')
+    
     f.write("Calculations for Pie Chart of Genre frequencies at a given weather state\n\n")
     for key, value in genre_freq_by_condition.items():
         f.write("Weather State: " + key + " | Frequencies of Genre: " + str(json.dumps(value)))
         f.write('\n')
+    f.write('\n\n----------------------------------------------------------------------------------------------------------------------------\n\n')
+    
+    f.write("Frequency of Genres Over Time\n\n")
+    for key, value in yearly_frequencies.items():
+        f.write("Year: " + str(key) + " | Frequency of Genre: " + str(json.dumps(value)))
+        f.write('\n')
+    
     f.close()
 
 def main():
@@ -93,10 +163,8 @@ def main():
     cur, conn =  data_collection.setUpDatabase('final.db')
     barGraph(cur, conn)
     pieCharts(cur, conn)
+    yearsAnalysisOfGenre(cur, conn)
     writeToFile()
-
-    print("Joint Genres with Weather Dates")
-
 
 if __name__ == "__main__":
     main()
