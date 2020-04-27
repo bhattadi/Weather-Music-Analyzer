@@ -44,6 +44,7 @@ def setUpTables(cur, conn):
 # Create a table with dates and weather data
 def setUpWeather(cur, conn):
 
+    #Create assignments of general weather states
     weather_dict = {'Snow':'Snow',
                     'Sleet': 'Hail',
                     'Hail': 'Hail',
@@ -56,33 +57,35 @@ def setUpWeather(cur, conn):
                     'Light Cloud': 'Sunny',
                     'Clear': 'Sunny'}
 
+    #Establish a start date and the incrementer for how many days to skip during each iteration
     count = 0
-
     start_date = datetime.date(2014, 1, 1)
-    #end_date = datetime.date(2020, 4, 24)
     delta = datetime.timedelta(days=10)
 
+    #Only access 20 items at a time from the API
     while count < 20:
         
         # Run execute to fetch data
         cur.execute('SELECT temperature FROM Weather_temp WHERE date=?', (str(start_date),))
 
+        #If the data is already in the datatable, then skip this iteration
         if(cur.fetchone() != None):
             start_date += delta
             continue
         else:
             pass
 
+        #Update thecounter and call the API to retrieve information from New York City weather
         count += 1
-
         date = str(start_date)
-
         date = date.replace('-', '/', 2)
         url = 'https://www.metaweather.com/api/location/2459115/' + str(date) + '/'
         data = requests.get(url).json()
         temperature_in = 0.0
         common_condition = {}
         
+        #For each weather log for that particular date
+        #Find the average temperature using a dictionary
         for item in data:
             condition = weather_dict[item['weather_state_name']]
             common_condition[condition] = common_condition.get(condition, 0) + 1
@@ -91,12 +94,12 @@ def setUpWeather(cur, conn):
             else:
                 temperature_in += 0
 
+        #Take the average of the temperature and convert to fahrenheit
         temperature_in /= len(data)
         temperature_in = ((9/5) * temperature_in) + 32
-
         condition_in = max(common_condition.items(), key=operator.itemgetter(1))[0]  
 
-
+        #Write this data into the database
         cur.execute('''INSERT INTO Weather_temp (date, temperature) VALUES (?,?)''', (start_date, temperature_in))
         cur.execute('''INSERT INTO Weather_condition (date, condition) VALUES (?,?)''', (start_date, condition_in))
         conn.commit()
