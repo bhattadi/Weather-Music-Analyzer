@@ -17,6 +17,7 @@ import data_collection
 #Using SQL joins to find corresponding genres for a particular date
 #Using matplotlib to produce bar graphs and pie charts
 # -------------- Visualization #1--------------------
+# Input: 
 def barGraph(cur, conn):
     cur.execute('SELECT Genres.date, Genres.genre \
         FROM Genres \
@@ -37,7 +38,10 @@ def barGraph(cur, conn):
     plt.savefig('Genre vs Frequency Bar Graph')
 
 
-# ------------------ Visualizations #2-#6 ----------------------        
+# ------------------ Visualizations #2-#6 ----------------------    
+# Input: Database cursor and connection
+# Output: Produces 5 pie charts corresponding to each type of weather condition 
+# and the frequency of genres on that type of day    
 def pieCharts(cur, conn):
     cur.execute('SELECT Weather_condition.condition, Genres.genre \
         FROM Genres \
@@ -47,10 +51,10 @@ def pieCharts(cur, conn):
     print(condition_and_genre)
 
     genre_freq_by_condition = {'Cloudy' : {}, 
-                                    'Rainy' : {},
-                                    'Sunny' : {},
-                                    'Snow' : {},
-                                    'Hail' : {}}
+                                'Rainy' : {},
+                                'Sunny' : {},
+                                'Snow' : {},
+                                'Hail' : {}}
 
     for state, genre in condition_and_genre:
         genre_freq_by_condition[state][genre] = genre_freq_by_condition[state].get('genre', 0) + 1

@@ -29,14 +29,19 @@ secret = '342431872a43454fa85c8b35d0fb8a46'
 client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
 sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
-#Initial database set up function to allow the program to be able to find the file in the OS
+# Initial database set up function to allow the program to be able to find the file in the OS
+# Input: database name (string)
+# Output: cur and conn (database cursor and connection)
 def setUpDatabase(db_name):
     path = os.path.dirname(os.path.abspath(__file__))
     conn = sqlite3.connect(path+'/'+db_name)
     cur = conn.cursor()
     return cur, conn
 
+
 # Creates the weather temperature table, weather conditions table, the top Billboards table, and Genres table
+# Input: database cursor and connection
+# Output: none; creates database tables
 def setUpTables(cur, conn):
     cur.execute("CREATE TABLE IF NOT EXISTS 'Weather_temp' ('date' TEXT, 'temperature' REAL)")
     cur.execute("CREATE TABLE IF NOT EXISTS 'Weather_condition' ('date' TEXT, 'condition' TEXT)")
@@ -46,6 +51,8 @@ def setUpTables(cur, conn):
 
 # Call the weather API
 # Create a table with dates and weather data
+# Input: database cursor and connection
+# Output: Sets up weather tables with temperature/condition by date
 def setUpWeather(cur, conn):
 
     #Create assignments of general weather states
@@ -114,7 +121,8 @@ def setUpWeather(cur, conn):
 
 # Call the bill boards API
 # Create a table with dates and top hits
-
+# Input: The cur and conn connections to the final database
+# Output: Table filled with information about top number of songs on a given range of dates
 def setUpBillBoards(cur, conn):
 
     # genre setup
@@ -143,12 +151,11 @@ def setUpBillBoards(cur, conn):
     reg_exp = r'^\S+'
                 
     start_date = datetime.date(startYear, 6, 1)
-    #end_date = datetime.date(2020, 4, 24)
     delta = datetime.timedelta(days=numDays)
 
     counter = 0
     while counter < 20:
-        chart = billboard.ChartData(name='hot-100', date=str(start_date))
+        chart = billboard.ChartData(name='hot-100', date=str(start_date), timeout=50)
         cur.execute('SELECT name FROM Billboards WHERE date=?', (str(start_date),))
 
         if(cur.fetchone() != None):
@@ -186,6 +193,8 @@ def setUpBillBoards(cur, conn):
 
 
 # Find corresponding Genres for the songs
+# Input: The cur and conn connections to the final database
+# Output: Table filled with information about what the top genre of the day is for a range of dates
 def setUpGenres(cur, conn):
         
     count = 0
@@ -219,7 +228,8 @@ def setUpGenres(cur, conn):
 
         start_date += delta   
 
-
+# Input: none
+# Calling all setup functions to collect all data in counts of 20
 def main():
     cur, conn = setUpDatabase('final.db')
     print("Set up the Database")
