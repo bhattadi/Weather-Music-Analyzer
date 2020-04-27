@@ -65,7 +65,7 @@ def pieCharts(cur, conn):
         fig1, ax1 = plt.subplots()
         ax1.pie(percentages, labels=labels, shadow=True, startangle=90, autopct='%1.1f%%')
         ax1.axis('equal')
-        plt.title('Music Genres vs Frequency')
+        plt.title(item[0] + ' Day: Music Genres vs Frequency')
         plt.legend()
         plt.savefig('Genre vs Frequency Bar Graph ' + str(i))
         i += 1

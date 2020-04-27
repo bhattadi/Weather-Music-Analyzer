@@ -16,6 +16,9 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import re
 import matplotlib.pyplot as plt
 import numpy as np
+from collections import OrderedDict
+
+numDays = 5
 
 #Set up Spotify Authentication keys
 cid = '47c048a48eb241eb87f5303a87519107'
@@ -114,28 +117,33 @@ def setUpWeather(cur, conn):
 def setUpBillBoards(cur, conn):
 
     # genre setup
-    genres = {  'dance' : 'edm',
-                'modern rock': 'rock',
+    
+    master_genres = OrderedDict()
+
+    master_genres = {'modern rock': 'rock',
                 'pop rock': 'rock',
                 'rock' : 'rock',
                 'r&b': 'r&b',
                 'edm': 'edm',
                 'electro house' : 'edm',
                 'tropical house' : 'edm',
-                'pop' : 'pop',
-                'pop punk': 'pop',
-                'post-teen pop' : 'teen pop',
-                'teen pop' : 'teen pop',
                 'country': 'country',
                 'contemporary country': 'country',
                 'hip hop': 'rap',
                 'trap': 'rap',
-                'rap': 'rap'}
+                'rap': 'rap',
+                'dance' : 'edm',
+                'post-teen pop' : 'teen pop',
+                'teen pop' : 'teen pop',
+                'pop' : 'pop',
+                'pop punk': 'pop'}
+
+
     reg_exp = r'^\S+'
                 
     start_date = datetime.date(2014, 1, 1)
     #end_date = datetime.date(2020, 4, 24)
-    delta = datetime.timedelta(days=10)
+    delta = datetime.timedelta(days=numDays)
 
     counter = 0
     while counter < 20:
@@ -148,7 +156,7 @@ def setUpBillBoards(cur, conn):
         else:
             pass
 
-        chart = chart[:15]
+        chart = chart[:20]
         for item in chart:
             #Data Cleaning and Preprocessing for genre
             artist = item.artist.replace('by', '')
@@ -161,9 +169,9 @@ def setUpBillBoards(cur, conn):
 
             final_genre = ""
             genre_result = sp.artist(id)['genres']
-            for genre in genre_result:
-                if genres.get(genre) != None:
-                    final_genre = genres[genre]
+            for pair in master_genres.items():
+                if pair[0] in genre_result:
+                    final_genre = pair[1]
                     break
             
             if final_genre == "":
@@ -181,7 +189,7 @@ def setUpGenres(cur, conn):
         
     count = 0
     start_date = datetime.date(2014, 1, 1)
-    delta = datetime.timedelta(days=10)
+    delta = datetime.timedelta(days=numDays)
 
     while count < 20:
         
