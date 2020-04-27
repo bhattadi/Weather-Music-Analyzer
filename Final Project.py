@@ -17,20 +17,22 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 
+#Set up Spotify Authentication keys
 cid = '47c048a48eb241eb87f5303a87519107'
 secret = '342431872a43454fa85c8b35d0fb8a46'
+
+#Used spotipy documentation as an example
 client_credentials_manager = SpotifyClientCredentials(client_id=cid, client_secret=secret)
 sp = spotipy.Spotify(client_credentials_manager = client_credentials_manager)
 
+#Initial database set up function to allow the program to be able to find the file in the OS
 def setUpDatabase(db_name):
     path = os.path.dirname(os.path.abspath(__file__))
     conn = sqlite3.connect(path+'/'+db_name)
     cur = conn.cursor()
     return cur, conn
 
-# Create Database
-
-
+# Creates the weather temperature table, weather conditions table, the top Billboards table, and Genres table
 def setUpTables(cur, conn):
     cur.execute("CREATE TABLE IF NOT EXISTS 'Weather_temp' ('date' TEXT, 'temperature' REAL)")
     cur.execute("CREATE TABLE IF NOT EXISTS 'Weather_condition' ('date' TEXT, 'condition' TEXT)")
@@ -40,8 +42,6 @@ def setUpTables(cur, conn):
 
 # Call the weather API
 # Create a table with dates and weather data
-
-
 def setUpWeather(cur, conn):
 
     weather_dict = {'Snow':'Snow',
