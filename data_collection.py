@@ -1,7 +1,5 @@
 # SI 206 Final Project
-# Aditya Bhatt, Ashka Pujara, Anirudh Lagisetty
-
-#Barbara11$
+# Aditya Bhatt (bhattadi), Ashka Pujara (ashpuj), Anirudh Lagisetty (alagiset)
 
 # THE IMPORTS
 import sqlite3

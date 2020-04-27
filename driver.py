@@ -13,6 +13,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import data_collection
 
+frequency_of_genre = {}
+genre_freq_by_condition = {'Cloudy' : {}, 
+                            'Rainy' : {},
+                            'Sunny' : {},
+                            'Snow' : {},
+                            'Hail' : {}}
 
 #Using SQL joins to find corresponding genres for a particular date
 #Using matplotlib to produce bar graphs and pie charts
@@ -26,7 +32,6 @@ def barGraph(cur, conn):
         ON Weather_condition.date = Genres.date')
     date_and_genre = cur.fetchall()
     
-    frequency_of_genre = {}
     for date, genre in date_and_genre:
         frequency_of_genre[genre] = frequency_of_genre.get(genre, 0) + 1
 
@@ -51,12 +56,6 @@ def pieCharts(cur, conn):
     condition_and_genre = cur.fetchall()
     # print(condition_and_genre)
 
-    genre_freq_by_condition = {'Cloudy' : {}, 
-                                'Rainy' : {},
-                                'Sunny' : {},
-                                'Snow' : {},
-                                'Hail' : {}}
-
     for state, genre in condition_and_genre:
         genre_freq_by_condition[state][genre] = genre_freq_by_condition[state].get(genre, 0) + 1
     
@@ -76,15 +75,25 @@ def pieCharts(cur, conn):
         i += 1
 
 
-# Plot weather vs genre
-# Plot weather over time
-# Plot time over genre
+# Input: None
+# Output: Written file with calculations for all visualizations
+def writeToFile():
+    f = open("Final_calculations.txt", "a")
+    f.write("Frequency of Music Genre\n\n")
+    f.write(json.dumps(frequency_of_genre))
+    f.write('\n\n----------------------------------------------------------------------------------------------------------------------------\n\n')
+    f.write("Calculations for Pie Chart of Genre frequencies at a given weather state\n\n")
+    for key, value in genre_freq_by_condition.items():
+        f.write("Weather State: " + key + " | Frequencies of Genre: " + str(json.dumps(value)))
+        f.write('\n')
+    f.close()
 
 def main():
 
     cur, conn =  data_collection.setUpDatabase('final.db')
     barGraph(cur, conn)
     pieCharts(cur, conn)
+    writeToFile()
 
     print("Joint Genres with Weather Dates")
 

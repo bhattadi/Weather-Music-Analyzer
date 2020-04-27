@@ -1,0 +1,33 @@
+Frequency of Music Genre
+
+{"dance pop": 39, "rap": 41, "rock": 3, "edm": 5, "pop": 9, "r&b": 1, "Other": 2}
+
+----------------------------------------------------------------------------------------------------------------------------
+
+Calculations for Pie Chart of Genre frequencies at a given weather state
+
+Weather State: Cloudy | Frequencies of Genre: {"dance pop": 4, "pop": 2, "rap": 6, "r&b": 1, "Other": 1}
+Weather State: Rainy | Frequencies of Genre: {"rap": 19, "dance pop": 20, "rock": 1, "edm": 3, "pop": 2, "Other": 1}
+Weather State: Sunny | Frequencies of Genre: {"dance pop": 15, "rap": 16, "rock": 1, "pop": 5, "edm": 2}
+Weather State: Snow | Frequencies of Genre: {}
+Weather State: Hail | Frequencies of Genre: {"rock": 1}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
