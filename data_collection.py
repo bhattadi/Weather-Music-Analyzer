@@ -142,11 +142,7 @@ def setUpBillBoards(cur, conn):
                 'dance' : 'edm',
                 'electropop' : 'edm',
                 'boy band' : 'boy band',
-                # 'canadian pop' : 'international', 
-                # 'canadian hip hop' : 'international', 
-                # 'canadian contemporary r&b' : 'international', 
                 'latin' : 'international',
-                #'post-teen pop' : 'teen pop',
                 'hip hop': 'rap',
                 'trap': 'rap',
                 'chicago rap': 'rap',
@@ -179,17 +175,11 @@ def setUpBillBoards(cur, conn):
             artist = artist.replace('The ', '')
             artist = re.findall(reg_exp, artist)[0]   
 
-            print(item.title)
-            # print(artist)
-
             val = sp.search(q=(item.title + " " + artist), limit=1, type='track')
             id = val['tracks']['items'][0]['artists'][0]['id']
 
             final_genre = ""
             genre_result = sp.artist(id)['genres']
-
-            print(genre_result)
-            print('-----')
 
             for pair in master_genres.items():
                 if pair[0] in genre_result:

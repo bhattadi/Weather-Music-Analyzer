@@ -54,7 +54,6 @@ def pieCharts(cur, conn):
         JOIN Weather_condition \
         ON Weather_condition.date = Genres.date')
     condition_and_genre = cur.fetchall()
-    # print(condition_and_genre)
 
     for state, genre in condition_and_genre:
         genre_freq_by_condition[state][genre] = genre_freq_by_condition[state].get(genre, 0) + 1
@@ -64,8 +63,6 @@ def pieCharts(cur, conn):
         #we need to map each weather state into a pie chart where the percentages are determined by the frequency of the genre
         labels = item[1].keys()
         percentages = item[1].values()
-        print(labels)
-        print(percentages)
         fig1, ax1 = plt.subplots()
         ax1.pie(percentages, labels=labels, shadow=True, startangle=90, autopct='%1.1f%%')
         ax1.axis('equal')
