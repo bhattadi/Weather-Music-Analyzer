@@ -20,6 +20,7 @@ from collections import OrderedDict
 
 numDays = 25
 startYear = 2013
+local_startDate = datetime.date(startYear, 6, 1)
 
 #Set up Spotify Authentication keys
 cid = '47c048a48eb241eb87f5303a87519107'
@@ -55,6 +56,7 @@ def setUpTables(cur, conn):
 # Output: Sets up weather tables with temperature/condition by date
 def setUpWeather(cur, conn):
 
+    found = False
     #Create assignments of general weather states
     weather_dict = {'Snow':'Snow',
                     'Sleet': 'Hail',
@@ -71,7 +73,7 @@ def setUpWeather(cur, conn):
     #Establish a start date and the incrementer for how many days to skip during each iteration
     count = 0
     start_date = datetime.date(startYear, 6, 1)
-    delta = datetime.timedelta(days=10)
+    delta = datetime.timedelta(days=numDays)
 
     #Only access 20 items at a time from the API
     while count < 20:
@@ -85,6 +87,10 @@ def setUpWeather(cur, conn):
             continue
         else:
             pass
+
+        if found == False:
+            found = True
+            local_startDate = start_date
 
         #Update thecounter and call the API to retrieve information from New York City weather
         count += 1
@@ -124,12 +130,9 @@ def setUpWeather(cur, conn):
 # Input: The cur and conn connections to the final database
 # Output: Table filled with information about top number of songs on a given range of dates
 def setUpBillBoards(cur, conn):
-
-    # genre setup
-    
     master_genres = OrderedDict()
-
     master_genres = {'modern rock': 'rock',
+                'modern alternative rock' : 'rock',
                 'pop rock': 'rock',
                 'rock' : 'rock',
                 'r&b': 'r&b',
@@ -138,24 +141,31 @@ def setUpBillBoards(cur, conn):
                 'tropical house' : 'edm',
                 'country': 'country',
                 'contemporary country': 'country',
+                'dance' : 'edm',
+                'electropop' : 'edm',
+                'boy band' : 'boy band',
+                # 'canadian pop' : 'international', 
+                # 'canadian hip hop' : 'international', 
+                # 'canadian contemporary r&b' : 'international', 
+                'latin' : 'international',
+                #'post-teen pop' : 'teen pop',
                 'hip hop': 'rap',
                 'trap': 'rap',
+                'chicago rap': 'rap',
+                'melodic rap': 'rap',
                 'rap': 'rap',
-                'dance' : 'edm',
-                'post-teen pop' : 'teen pop',
                 'teen pop' : 'teen pop',
+                'dance pop' : 'dance pop',
                 'pop' : 'pop',
                 'pop punk': 'pop'}
 
-
-    reg_exp = r'^\S+'
-                
-    start_date = datetime.date(startYear, 6, 1)
+    reg_exp = r'^\S+'             
+    start_date = local_startDate
     delta = datetime.timedelta(days=numDays)
 
     counter = 0
     while counter < 20:
-        chart = billboard.ChartData(name='hot-100', date=str(start_date), timeout=50)
+        chart = billboard.ChartData(name='hot-100', date=str(start_date), timeout=100)
         cur.execute('SELECT name FROM Billboards WHERE date=?', (str(start_date),))
 
         if(cur.fetchone() != None):
@@ -170,13 +180,19 @@ def setUpBillBoards(cur, conn):
             artist = item.artist.replace('by', '')
             artist = artist.replace('The ', '')
             artist = re.findall(reg_exp, artist)[0]   
-            # print(item.title)
+
+            print(item.title)
             # print(artist)
+
             val = sp.search(q=(item.title + " " + artist), limit=1, type='track')
             id = val['tracks']['items'][0]['artists'][0]['id']
 
             final_genre = ""
             genre_result = sp.artist(id)['genres']
+
+            print(genre_result)
+            print('-----')
+
             for pair in master_genres.items():
                 if pair[0] in genre_result:
                     final_genre = pair[1]
@@ -198,7 +214,7 @@ def setUpBillBoards(cur, conn):
 def setUpGenres(cur, conn):
         
     count = 0
-    start_date = datetime.date(startYear, 6, 1)
+    start_date = local_startDate
     delta = datetime.timedelta(days=numDays)
 
     while count < 20:
