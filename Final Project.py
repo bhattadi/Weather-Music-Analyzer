@@ -215,11 +215,9 @@ def setUpGenres(cur, conn):
 
 #   ------------------------------------------NEW FILE BEGINS HERE--------------------------------------------
 
-# Join 2 weather tables together
-# Join Genre table with weather table to find matching data
-
+#Using SQL joins to find corresponding genres for a particular date
+#Using matplotlib to produce bar graphs and pie charts
 def joinTables(cur, conn):
-
     # -------- Visualization #1--------------------
     cur.execute('SELECT Genres.date, Genres.genre \
         FROM Genres \
@@ -234,7 +232,7 @@ def joinTables(cur, conn):
     x_axis = frequency_of_genre.keys()
     y_axis = frequency_of_genre.values()
     plt.bar(x_axis, y_axis)
-    plt.title('Genres vs Frequency')
+    plt.title('Music Genres vs Frequency')
     plt.ylabel('Frequency')
     plt.xlabel('Genres')
     plt.savefig('Genre vs Frequency Bar Graph')
@@ -266,7 +264,7 @@ def joinTables(cur, conn):
         fig1, ax1 = plt.subplots()
         ax1.pie(percentages, labels=labels, shadow=True, startangle=90, autopct='%1.1f%%')
         ax1.axis('equal')
-        plt.title('Genres vs Frequency')
+        plt.title('Music Genres vs Frequency')
         plt.legend()
         plt.savefig('Genre vs Frequency Bar Graph ' + str(i))
         i += 1
