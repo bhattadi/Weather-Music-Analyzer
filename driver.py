@@ -71,6 +71,9 @@ def pieCharts(cur, conn):
         plt.savefig('Genre vs Frequency Pie Chart ' + str(i))
         i += 1
 
+def yearsAnalysisOfGenre(cur, conn):
+    
+
 
 # Input: None
 # Output: Written file with calculations for all visualizations
